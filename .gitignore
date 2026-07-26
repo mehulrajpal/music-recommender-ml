@@ -1,0 +1,29 @@
+# Byte-compiled / cache
+__pycache__/
+*.py[cod]
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Environments
+.venv/
+venv/
+env/
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Ad-hoc inference outputs
+predictions.csv
+*.log
+
+# Trained artifacts ARE committed in this project (genre/artist/recommender .pkl
+# files + schema.pkl at the repo root, matching the reference layout) so they are
+# intentionally NOT ignored here. Re-generate them anytime with:
+#   python -m src.train --data music_dataset.csv --model xgboost

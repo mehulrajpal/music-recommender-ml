@@ -1,0 +1,58 @@
+# =============================================================
+# Configuration for the Music Taste Predictor & Recommender
+# Edit these lists if your dataset uses unusual column names.
+# The pipeline auto-detects columns by matching these candidates
+# (case-insensitive, substring match) against your CSV headers.
+# =============================================================
+
+schema:
+  genre_candidates: ["genre", "genres", "track_genre", "category", "style"]
+  artist_candidates: ["artist", "artist_name", "artists", "singer", "performer"]
+  track_candidates: ["track_name", "song_name", "song", "title", "track"]
+  user_candidates: ["user_id", "userid", "user", "listener_id", "listener"]
+  id_candidates: ["id", "track_id", "song_id", "uri", "url"]
+
+  # Columns matching these are always excluded from model features
+  # (free text / identifiers, not predictive numeric or categorical signal)
+  exclude_from_features: ["id", "track_id", "song_id", "uri", "url", "link",
+                           "album", "release_date", "date", "lyrics", "description"]
+
+  # Max unique values for a text column to be treated as a usable
+  # low-cardinality categorical feature (one-hot encoded). Above this,
+  # the column is dropped from the feature set (treated as free text/ID).
+  max_categorical_cardinality: 50
+
+preprocessing:
+  numeric_impute_strategy: "median"
+  categorical_impute_strategy: "most_frequent"
+  scale_numeric: true
+
+models:
+  knn:
+    n_neighbors: 15
+    weights: "distance"
+  bagging:            # Random Forest = bagging ensemble of decision trees
+    n_estimators: 300
+    max_depth: null
+    min_samples_leaf: 2
+  boosting:            # Gradient Boosting = boosted decision trees
+    n_estimators: 300
+    learning_rate: 0.05
+    max_depth: 3
+  xgboost:             # XGBoost = optimized gradient-boosted trees
+    n_estimators: 300
+    learning_rate: 0.05
+    max_depth: 4
+    subsample: 0.9
+    colsample_bytree: 0.9
+  ensemble:
+    voting: "soft"     # combine knn + bagging + xgboost (fastest, strongest boosting)
+
+recommender:
+  n_neighbors: 10
+  metric: "cosine"
+
+training:
+  test_size: 0.2
+  random_state: 42
+  min_class_count: 2   # classes with fewer rows than this are dropped (stratify safety)
